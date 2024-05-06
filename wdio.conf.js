@@ -1,4 +1,4 @@
-export const config = {
+exports.config = {
     //
     // ====================
     // Runner Configuration
@@ -51,12 +51,9 @@ export const config = {
     //
     capabilities: [{
         browserName: 'chrome'
-    }
-    , {
+    }, {
         browserName: 'firefox'
-     }
-],
-  
+    }],
 
     //
     // ===================
