@@ -25,7 +25,7 @@ class ProofOfConcept extends Url {
         let dropLinkLength = await this.drop().length;
         //console.log(length + "cheese2");
         //console.log(await this.drop(1) + "cheese3")
-        for(let y = 0;y < 1/*dropLinkLength*/; y++){
+        for(let y = 0;y < dropLinkLength; y++){
             let optGrab = this.options(y+1);
             let insLinkLength = await this.options(y+1).length;
             for(let i = 0;i < insLinkLength; i++){
@@ -48,10 +48,13 @@ class ProofOfConcept extends Url {
                     timeout: 2000,
                     timeoutMsg: "link doesn't work or the link brings user to same page"
                 });
-                // if((await this.badPage).isExisting() || (await this.page404).isExisting()){
-                //     throw new Error(`bad link detected on dropdown ${y+1}, link ${i+1}.`)
-                // }
-                //await browser.pause(300);
+                //await browser.pause(1000);
+                try {
+                    await this.badPage.waitForExist({ timeout: 250, reverse: true});
+                    await this.page404.waitForExist({ timeout: 250, reverse: true});
+                } catch (error) {
+                    throw new Error(`bad link detected on dropdown ${y+1}, link ${i+1}.`);
+                }
             }
         }
     }

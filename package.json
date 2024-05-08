@@ -7,5 +7,14 @@
     },
     "scripts": {
         "wdio": "wdio run wdio.conf.js"
-    }
+    },
+    "name": "finalproject",
+    "version": "1.0.0",
+    "main": "wdio.conf.js",
+    "directories": {
+        "test": "test"
+    },
+    "author": "",
+    "license": "ISC",
+    "description": ""
 }
