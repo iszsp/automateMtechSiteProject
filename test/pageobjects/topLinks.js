@@ -1,9 +1,9 @@
 
 const { $ } = require('@wdio/globals');
 const { $$ } = require('@wdio/globals');
-const Url = require('./url.js');
+const FindBadPage = require('./findBadPage.js')
 
-class TopLinks extends Url {
+class TopLinks extends FindBadPage {
     get drop() {
         return $$(`[class*="active"] .jet-mega-menu-list > :nth-child(n)`);
     }
@@ -12,12 +12,6 @@ class TopLinks extends Url {
     }
     external(i) {
         return $$(`[class*="active"] .jet-mega-menu-list > :nth-child(${i}) .elementor-widget:not(.elementor-widget-heading) [href]`);
-    }
-    get badPage() {
-        return $('//*[contains(text(),"Uh oh.")]')
-    }
-    get page404() {
-        return $('//*[contains(text(),"404 Not Found")]')
     }
     async topLinkRun() {
         await browser.setWindowSize(1200, 800);
@@ -34,18 +28,13 @@ class TopLinks extends Url {
                 if(chgTab.length > 1){
                     await browser.switchToWindow(chgTab[0]);
                 }
-                (await this.drop[y]).click();
+                await this.drop[y].click();
                 //await browser.pause(500);
-                let hrefTag = (await optGrab[i].getAttribute('href'));
+                // let hrefTag = (await optGrab[i].getAttribute('href'));
                 await optGrab[i].waitForClickable();
-                (await optGrab[i]).click();
+                await optGrab[i].click();
                 //await browser.pause(1000);
-                try {
-                    await this.badPage.waitForExist({ timeout: 250, reverse: true});
-                    await this.page404.waitForExist({ timeout: 250, reverse: true});
-                } catch (error) {
-                    throw new Error(`bad link detected on dropdown ${y+1}, link ${i+1} due to 404 or bad load time.`);
-                }
+                await this.checkForBad(`bad link detected on dropdown ${y+1}, link ${i+1} due to 404 or bad load time.`);
                         // I think the test doesn't run efficient enough to run
                         // the commented part below, it times out...
                 // if(hrefTag.includes('https') == false){
