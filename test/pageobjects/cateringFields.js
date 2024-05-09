@@ -9,8 +9,8 @@ class CateringFields extends RunTheCateringStuff {
     get allInputs() {
         return $$('.gf_browser_chrome input:not([type="hidden"]):not([disabled="disabled"]):not(.button), textarea');
     }
-    get reqFields() {
-        return $$('[aria-required="true"]');
+    get reqFieldsNoCal() {
+        return $$('[aria-required="true"]:not([placeholder="mm/dd/yyyy"])');
     }
     get selectReqFields() {
         return $$('select[aria-required="true"]');
@@ -18,11 +18,17 @@ class CateringFields extends RunTheCateringStuff {
     selectReqFieldsOption(do1ForEmpty) {
         return $$(`select[aria-required="true"] :nth-child(${do1ForEmpty})`);
     }
-    get inputReqFields() {
-        return $$('input[aria-required="true"]');
+    get inputReqFieldsNoCal() {
+        return $$('input[aria-required="true"]:not([placeholder="mm/dd/yyyy"])');
     }
-    get closeCalendar() {
-        return $('//label[contains(text(),"MTECH Campus")]');
+    get calendarClick() {
+        return $$('tr:last-of-type td[data-handler="selectDay"]');
+    }
+    get calendar() {
+        return $('[placeholder="mm/dd/yyyy"]');
+    }
+    get closeDrpDwn() {
+        return $('//*[contains(text(),"Additional Information")]');
     }
     get catSbmBtn() {
         return $('//*[contains(@value,"Submit")]');
@@ -47,31 +53,43 @@ class CateringFields extends RunTheCateringStuff {
             throw new Error('Submit button may have worked even though all input fields are empty');
         }
     }
-    async allBut1InputRun() {
+    async allBut2InputRun() {
+        await browser.setWindowSize(1200, 800);
         await this.startCatering();
-        let reqLength = await this.reqFields.length
+        let calLength = await this.calendarClick.length-1;
+        //await this.calendar.waitForClickable();
+        
+        let reqLength = await this.reqFieldsNoCal.length
         for(let i = 0; i < reqLength; i++){
+            await this.calendar.click();
+            await this.calendarClick[calLength].click();
             //await this.inputReqFields[0].setValue('Bo');
-            await this.inputReqFields[1].setValue('Jills');
-            await this.inputReqFields[2].setValue('BoJills@gmail.com');
-            await this.inputReqFields[3].setValue('9999999999');
-            await this.inputReqFields[4].setValue('11/11/1111');
-            await this.inputReqFields[5].setValue('0');
-            await this.inputReqFields[6].setValue('my hamster ate food');
-            await this.inputReqFields[7].setValue('3');
-            await this.inputReqFields[8].setValue('0');
+            await this.inputReqFieldsNoCal[1].setValue('Jills');
+            await this.inputReqFieldsNoCal[2].setValue('BoJills@gmail.com');
+            await this.inputReqFieldsNoCal[3].setValue('9999999999');
+            await this.inputReqFieldsNoCal[4].setValue('0');
+            await this.inputReqFieldsNoCal[5].setValue('my hamster ate food');
+            await this.inputReqFieldsNoCal[6].setValue('3');
+            await this.inputReqFieldsNoCal[7].setValue('0');
+            
             await this.selectReqFields[0].click();
+            
             await this.selectReqFieldsOption(2)[0].click();
+            
             await this.selectReqFields[1].click();
+            
+            
             await this.selectReqFieldsOption(2)[1].click();
-            if(i < 9){
-                await this.inputReqFields[i].waitForClickable();
-                await this.inputReqFields[i].clearValue();
+            await this.closeDrpDwn.click();
+            await browser.pause('5000');
+            if(i < 8){
+                await this.inputReqFieldsNoCal[i].waitForClickable();
+                await this.inputReqFieldsNoCal[i].clearValue();
             }
             else{
-                await this.selectReqFields[i-9].click();
-                await this.selectReqFieldsOption(1)[i-9].click();
-                await this.selectReqFieldsOption(1)[i-9].click();
+                await this.selectReqFields[i-8].click();
+                await this.selectReqFieldsOption(1)[i-8].click();
+                //await this.selectReqFieldsOption(1)[i-9].click();
             }
             await this.catSbmBtn.click();
             if(await !this.badSbm.isExisting()){
