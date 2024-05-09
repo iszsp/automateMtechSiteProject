@@ -3,7 +3,7 @@
 
 const Url = require('./url');
 
-module.exports = class FindBadPage extends Url{
+module.exports = class FindBadPage extends Url {
     async checkForBad(errorMessage) {
         const module = await import('node-fetch');
         const fetch = module.default;

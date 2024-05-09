@@ -1,10 +1,10 @@
 const { $ } = require('@wdio/globals');
 const { $$ } = require('@wdio/globals');
-const RunTheSearchStuff = require('./searchBase.js')
+const RunTheSearchStuff = require('./baseSearch.js')
 
 
 
-class Search extends RunTheSearchStuff{
+class Search extends RunTheSearchStuff {
     get srcBtn() {
         return $('[class*="active"] .fa-search');
     }

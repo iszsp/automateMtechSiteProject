@@ -1,6 +1,6 @@
 const FindBadPage = require('./findBadPage.js');
 
-module.exports = class RunTheSearchStuff extends FindBadPage{
+module.exports = class RunTheSearchStuff extends FindBadPage {
     async query(whatToSearch) {
         await this.openUrl('search');
         await this.srcBtn.click();
