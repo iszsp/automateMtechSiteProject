@@ -3,9 +3,9 @@ const { $$ } = require('@wdio/globals');
 const RunTheCateringStuff = require("./baseCateringFields.js");
 
 class CateringFields extends RunTheCateringStuff {
-    get allFields() {
-        return $$('.gf_browser_chrome input:not([type="hidden"]):not([disabled="disabled"]):not(.button), .gf_browser_chrome select:not([type="hidden"]):not([disabled="disabled"]), textarea');
-    }
+    // get allFields() {
+    //     return $$('.gf_browser_chrome input:not([type="hidden"]):not([disabled="disabled"]):not(.button), .gf_browser_chrome select:not([type="hidden"]):not([disabled="disabled"]), textarea');
+    // }
     get allInputs() {
         return $$('.gf_browser_chrome input:not([type="hidden"]):not([disabled="disabled"]):not(.button), textarea');
     }
@@ -56,14 +56,15 @@ class CateringFields extends RunTheCateringStuff {
     async allBut2InputRun() {
         await browser.setWindowSize(1200, 800);
         await this.startCatering();
-        let calLength = await this.calendarClick.length-1;
-        //await this.calendar.waitForClickable();
         
         let reqLength = await this.reqFieldsNoCal.length
+        
+                
+            
         for(let i = 0; i < reqLength; i++){
-            await this.calendar.click();
-            await this.calendarClick[calLength].click();
-            //await this.inputReqFields[0].setValue('Bo');
+            //await browser.pause(5000);
+            await this.inputReqFieldsNoCal[0].setValue('Bo');
+            //await browser.pause(5000);
             await this.inputReqFieldsNoCal[1].setValue('Jills');
             await this.inputReqFieldsNoCal[2].setValue('BoJills@gmail.com');
             await this.inputReqFieldsNoCal[3].setValue('9999999999');
@@ -71,27 +72,36 @@ class CateringFields extends RunTheCateringStuff {
             await this.inputReqFieldsNoCal[5].setValue('my hamster ate food');
             await this.inputReqFieldsNoCal[6].setValue('3');
             await this.inputReqFieldsNoCal[7].setValue('0');
-            
+            await this.calendar.waitForClickable();
+            await this.calendar.click();
+            await this.calendarClick[1].click();
+
+            await this.selectReqFields[0].moveTo();
             await this.selectReqFields[0].click();
-            
             await this.selectReqFieldsOption(2)[0].click();
-            
+            await this.selectReqFields[0].waitForStable();
+
+            await this.selectReqFields[1].moveTo();
             await this.selectReqFields[1].click();
-            
-            
             await this.selectReqFieldsOption(2)[1].click();
-            await this.closeDrpDwn.click();
-            await browser.pause('5000');
+            await this.selectReqFields[1].waitForStable();
+            
             if(i < 8){
                 await this.inputReqFieldsNoCal[i].waitForClickable();
                 await this.inputReqFieldsNoCal[i].clearValue();
             }
             else{
+                await this.selectReqFields[i-8].moveTo();
+                await this.selectReqFields[i-8].waitForClickable();
                 await this.selectReqFields[i-8].click();
+                await this.selectReqFieldsOption(1)[i-8].waitForStable();
                 await this.selectReqFieldsOption(1)[i-8].click();
-                //await this.selectReqFieldsOption(1)[i-9].click();
+                await this.selectReqFields[i-8].waitForStable();
+                await browser.pause(5000);
             }
+            //await browser.pause(5000);
             await this.catSbmBtn.click();
+            await $('.gform_ajax_spinner').waitForExist({ reverse: true });
             if(await !this.badSbm.isExisting()){
                 throw new Error(`Submit button may have worked even though 1 required field (field: ${i}) was empty`);
             }
