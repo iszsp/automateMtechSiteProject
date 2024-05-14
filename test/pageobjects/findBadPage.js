@@ -13,5 +13,6 @@ module.exports = class FindBadPage extends Url {
         if(status == 404){
             throw new Error(errorMessage);
         }
+        console.log(status + "cheese");
     }
 };

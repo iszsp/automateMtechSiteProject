@@ -18,22 +18,18 @@ class BottomLinks extends FindBadPage {
             let optGrab = this.options(y+1);
             let insLinkLength = await this.options(y+1).length;
             for(let i = 0;i < insLinkLength; i++){
-                let chgTab = await browser.getWindowHandles();
                 await this.openUrl('');
                 let origUrl = await browser.getUrl();
+                let chgTab = await browser.getWindowHandles();
                 if(chgTab.length > 1){
                     await browser.switchToWindow(chgTab[0]);
                 }
-                let hrefTag = (await optGrab[i].getAttribute('href'));
+                let hrefTag = await optGrab[i].getAttribute('href');
                 await optGrab[i].waitForClickable();
-                (await optGrab[i]).click();
-                //await browser.pause(1000);
+                await optGrab[i].click();
                 await this.checkForBad(`bad link detected on dropdown ${y+1}, link ${i+1} due to 404 or bad load time.`);
-                        // This test seems to run shorter than topLinks
-                        // so the part below doesn't time out.
                 if(hrefTag.includes('https') == false){
-                    let linkUrl = await browser.getUrl();
-                    if(linkUrl == origUrl){
+                    if(await browser.getUrl() == origUrl){
                         throw new Error(`Is the link detected on dropdown ${y+1}, link ${i+1} supposed to do nothing/ bring the user to the same page?`);
                     }
                 }
